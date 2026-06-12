@@ -4,6 +4,8 @@
 *.dll
 *.so
 *.dylib
+# executable for this project
+pokedexcli
 
 # Test binary, built with `go test -c`
 *.test
