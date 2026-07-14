@@ -11,7 +11,11 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
+}
+
+type config struct {
+	locationOffset int
 }
 
 func cleanInput(text string) []string {
@@ -25,6 +29,16 @@ func cleanInput(text string) []string {
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
+		"map": {
+			name:        "map",
+			description: "Displays the next 20 map locations",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 map locations",
+			callback:    commandMapb,
+		},
 		"help": {
 			name:        "help",
 			description: "Displays a help message",
@@ -41,6 +55,9 @@ func getCommands() map[string]cliCommand {
 func repl() {
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)
+	configuration := config{
+		locationOffset: 0,
+	}
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
@@ -50,6 +67,9 @@ func repl() {
 			fmt.Printf("Unrecognized command: %v\n", command)
 			continue
 		}
-		action.callback()
+		err := action.callback(&configuration)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
