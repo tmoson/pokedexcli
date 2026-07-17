@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/tmoson/pokedexcli/internal/pokecache"
 	"os"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type cliCommand struct {
@@ -16,6 +18,7 @@ type cliCommand struct {
 
 type config struct {
 	locationOffset int
+	cache          pokecache.Cache
 }
 
 func cleanInput(text string) []string {
@@ -57,6 +60,7 @@ func repl() {
 	scanner := bufio.NewScanner(os.Stdin)
 	configuration := config{
 		locationOffset: 0,
+		cache:          pokecache.NewCache(5 * time.Second),
 	}
 	for {
 		fmt.Print("Pokedex > ")

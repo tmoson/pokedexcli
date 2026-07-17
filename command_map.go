@@ -23,19 +23,28 @@ type APIResponse struct {
 func commandMap(conf *config) error {
 	offset := conf.locationOffset
 	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/?offset=%v&limit=20", offset)
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
 	var apiResponse APIResponse
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &apiResponse)
-	if err != nil {
-		return err
+	val, found := conf.cache.Get(url)
+	if found {
+		err := json.Unmarshal(val, &apiResponse)
+		if err != nil {
+			return err
+		}
+	} else {
+		res, err := http.Get(url)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		conf.cache.Add(url, body)
+		err = json.Unmarshal(body, &apiResponse)
+		if err != nil {
+			return err
+		}
 	}
 	for _, location := range apiResponse.Results {
 		fmt.Printf("%s\n", location.Name)
@@ -51,19 +60,27 @@ func commandMapb(conf *config) error {
 	}
 	offset -= 20
 	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/?offset=%v&limit=20", offset)
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
 	var apiResponse APIResponse
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &apiResponse)
-	if err != nil {
-		return err
+	val, found := conf.cache.Get(url)
+	if found {
+		err := json.Unmarshal(val, &apiResponse)
+		if err != nil {
+			return err
+		}
+	} else {
+		res, err := http.Get(url)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		err = json.Unmarshal(body, &apiResponse)
+		if err != nil {
+			return err
+		}
 	}
 	for _, location := range apiResponse.Results {
 		fmt.Printf("%s\n", location.Name)
