@@ -6,24 +6,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 )
 
-type namedResource struct {
-	Name string
-	Url  string
-}
-
-type APIResponse struct {
-	Count    int
-	Next     string
-	Previous string
-	Results  []namedResource
-}
-
-func commandMap(conf *config) error {
-	offset := conf.locationOffset
+func commandMap(conf *config, inputs ...string) error {
+	var offset int
+	if len(inputs) == 0 {
+		offset = conf.locationOffset
+	} else {
+		offset, parseErr := strconv.Atoi(inputs[0])
+		if parseErr != nil {
+			return parseErr
+		}
+		conf.locationOffset = offset
+	}
 	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/?offset=%v&limit=20", offset)
-	var apiResponse APIResponse
+	var apiResponse LocationAPIResponse
 	val, found := conf.cache.Get(url)
 	if found {
 		err := json.Unmarshal(val, &apiResponse)
@@ -53,14 +51,23 @@ func commandMap(conf *config) error {
 	return nil
 }
 
-func commandMapb(conf *config) error {
-	offset := conf.locationOffset
+func commandMapb(conf *config, inputs ...string) error {
+	var offset int
+	if len(inputs) == 0 {
+		offset = conf.locationOffset
+	} else {
+		offset, parseErr := strconv.Atoi(inputs[0])
+		if parseErr != nil {
+			return parseErr
+		}
+		conf.locationOffset = offset
+	}
 	if offset < 20 {
-		return errors.New("Already at the beginning")
+		return errors.New("Invalid back tracking index")
 	}
 	offset -= 20
 	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/?offset=%v&limit=20", offset)
-	var apiResponse APIResponse
+	var apiResponse LocationAPIResponse
 	val, found := conf.cache.Get(url)
 	if found {
 		err := json.Unmarshal(val, &apiResponse)
