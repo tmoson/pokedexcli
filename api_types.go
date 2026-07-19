@@ -21,15 +21,15 @@ type VersionGameIndex struct {
 }
 
 type PokemonMoveVersion struct {
-	MoveLearnMethod NamedResource `json:"move_learn_method"`
-	VersionGroup    NamedResource `json:"version_group"`
 	LevelLearnedAt  int           `json:"level_learned_at"`
 	Order           int           `json:"order"`
+	MoveLearnMethod NamedResource `json:"move_learn_method"`
+	VersionGroup    NamedResource `json:"version_group"`
 }
 
 type PokemonHeldItemVersion struct {
-	Version NamedResource `json:"version"`
 	Rarity  int           `json:"rarity"`
+	Version NamedResource `json:"version"`
 }
 
 type EncounterMethodRate struct {
@@ -43,9 +43,9 @@ type PokemonType struct {
 }
 
 type PokemonStat struct {
-	Stat     NamedResource `json:"stat"`
 	Effort   int           `json:"effort"`
 	BaseStat int           `json:"base_stat"`
+	Stat     NamedResource `json:"stat"`
 }
 
 type PokemonAbility struct {
@@ -96,13 +96,13 @@ type PokemonHeldItem struct {
 }
 
 type Pokemon struct {
+	IsDefault              bool                 `json:"is_default"`
 	Id                     int                  `json:"id"`
-	Name                   string               `json:"name"`
 	BaseExperience         int                  `json:"base_experience"`
 	Height                 int                  `json:"height"`
-	IsDefault              bool                 `json:"is_default"`
 	Order                  int                  `json:"order"`
 	Weight                 int                  `json:"weight"`
+	Name                   string               `json:"name"`
 	Abilities              []PokemonAbility     `json:"abilities"`
 	GameIndices            []VersionGameIndex   `json:"game_indices"`
 	HeldItem               PokemonHeldItem      `json:"held_item"`
@@ -112,7 +112,7 @@ type Pokemon struct {
 	PastAbilities          []PokemonAbilityPast `json:"pastAbilities"`
 	PastStats              []PokemonStatPast    `json:"pastStats"`
 	Sprites                PokemonSprites       `json:"sprites"`
-	Cries                  []PokemonCries       `json:"cries"`
+	Cries                  PokemonCries         `json:"cries"`
 	Species                NamedResource        `json:"species"`
 	Stats                  []PokemonStat        `json:"stats"`
 	Types                  []PokemonType        `json:"types"`
@@ -125,8 +125,8 @@ type PokemonEncounter struct {
 
 type LocationArea struct {
 	Id                   int                   `json:"id"`
-	Name                 string                `json:"name"`
 	GameIndex            int                   `json:"game_index"`
+	Name                 string                `json:"name"`
 	EncounterMethodRates []EncounterMethodRate `json:"encounter_method_rates"`
 	Location             NamedResource         `json:"location"`
 	Names                []Name                `json:"names"`
