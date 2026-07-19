@@ -19,6 +19,7 @@ type cliCommand struct {
 type config struct {
 	locationOffset int
 	cache          pokecache.Cache
+	pokedex        map[string]Pokemon
 }
 
 func cleanInput(text string) []string {
@@ -47,6 +48,21 @@ func getCommands() map[string]cliCommand {
 			description: "Displays all of the encounterable pokemon in a location area",
 			callback:    commandExplore,
 		},
+		"catch": {
+			name:        "catch",
+			description: "Throws a pokeball at the provided pokemon",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "catch",
+			description: "Inspect a pokemon you've caught",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Display all the pokemon in your pokedex",
+			callback:    commandPokedex,
+		},
 		"help": {
 			name:        "help",
 			description: "Displays a help message",
@@ -66,6 +82,7 @@ func repl() {
 	configuration := config{
 		locationOffset: 0,
 		cache:          pokecache.NewCache(5 * time.Second),
+		pokedex:        make(map[string]Pokemon),
 	}
 	for {
 		fmt.Print("Pokedex > ")
