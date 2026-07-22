@@ -6,21 +6,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 )
 
 func commandMap(conf *config, inputs ...string) error {
-	var offset int
-	if len(inputs) == 0 {
-		offset = conf.locationOffset
-	} else {
-		offset, parseErr := strconv.Atoi(inputs[0])
-		if parseErr != nil {
-			return parseErr
-		}
-		conf.locationOffset = offset
-	}
-	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/?offset=%v&limit=20", offset)
+	url := conf.nextLocation
 	var apiResponse LocationAPIResponse
 	val, found := conf.cache.Get(url)
 	if found {
@@ -47,26 +36,86 @@ func commandMap(conf *config, inputs ...string) error {
 	for _, location := range apiResponse.Results {
 		fmt.Printf("%s\n", location.Name)
 	}
-	conf.locationOffset += 20
+	conf.nextLocation = apiResponse.Next
+	conf.previousLocation = apiResponse.Previous
 	return nil
 }
 
-func commandMapb(conf *config, inputs ...string) error {
-	var offset int
-	if len(inputs) == 0 {
-		offset = conf.locationOffset
-	} else {
-		offset, parseErr := strconv.Atoi(inputs[0])
-		if parseErr != nil {
-			return parseErr
+func commandMapTea(conf *config, inputs ...string) string {
+	url := conf.nextLocation
+	var apiResponse LocationAPIResponse
+	val, found := conf.cache.Get(url)
+	if found {
+		err := json.Unmarshal(val, &apiResponse)
+		if err != nil {
+			return err.Error()
 		}
-		conf.locationOffset = offset
+	} else {
+		res, err := http.Get(url)
+		if err != nil {
+			return err.Error()
+		}
+		defer res.Body.Close()
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return err.Error()
+		}
+		conf.cache.Add(url, body)
+		err = json.Unmarshal(body, &apiResponse)
+		if err != nil {
+			return err.Error()
+		}
 	}
-	if offset < 20 {
-		return errors.New("Invalid back tracking index")
+	output := ""
+	for _, location := range apiResponse.Results {
+		output = fmt.Sprintf("%s%s\n", output, location.Name)
 	}
-	offset -= 20
-	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/?offset=%v&limit=20", offset)
+	conf.nextLocation = apiResponse.Next
+	conf.previousLocation = apiResponse.Previous
+	return output
+}
+
+func commandMapbTea(conf *config, inputs ...string) string {
+	if conf.previousLocation == "" {
+		return "Already at the beginning!"
+	}
+	url := conf.previousLocation
+	var apiResponse LocationAPIResponse
+	val, found := conf.cache.Get(url)
+	if found {
+		err := json.Unmarshal(val, &apiResponse)
+		if err != nil {
+			return err.Error()
+		}
+	} else {
+		res, err := http.Get(url)
+		if err != nil {
+			return err.Error()
+		}
+		defer res.Body.Close()
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return err.Error()
+		}
+		err = json.Unmarshal(body, &apiResponse)
+		if err != nil {
+			return err.Error()
+		}
+	}
+	output := ""
+	for _, location := range apiResponse.Results {
+		output = fmt.Sprintf("%s%s\n", output, location.Name)
+	}
+	conf.nextLocation = apiResponse.Next
+	conf.previousLocation = apiResponse.Previous
+	return output
+}
+
+func commandMapb(conf *config, inputs ...string) error {
+	if conf.previousLocation == "" {
+		return errors.New("Already at the beginning!")
+	}
+	url := conf.previousLocation
 	var apiResponse LocationAPIResponse
 	val, found := conf.cache.Get(url)
 	if found {
@@ -92,6 +141,7 @@ func commandMapb(conf *config, inputs ...string) error {
 	for _, location := range apiResponse.Results {
 		fmt.Printf("%s\n", location.Name)
 	}
-	conf.locationOffset -= 20
+	conf.nextLocation = apiResponse.Next
+	conf.previousLocation = apiResponse.Previous
 	return nil
 }

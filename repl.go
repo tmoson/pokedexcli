@@ -16,10 +16,57 @@ type cliCommand struct {
 	callback    func(*config, ...string) error
 }
 
+type teaCommand struct {
+	name        string
+	description string
+	callback    func(*config, ...string) string
+}
+
+func getCommandsTea() map[string]teaCommand {
+	return map[string]teaCommand{
+		"map": {
+			name:        "map",
+			description: "Displays the next 20 map locations",
+			callback:    commandMapTea,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 map locations",
+			callback:    commandMapbTea,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Displays all of the encounterable pokemon in a location area",
+			callback:    commandExploreTea,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Throws a pokeball at the provided pokemon",
+			callback:    commandCatchTea,
+		},
+		"inspect": {
+			name:        "catch",
+			description: "Inspect a pokemon you've caught",
+			callback:    commandInspectTea,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Display all the pokemon in your pokedex",
+			callback:    commandPokedexTea,
+		},
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelpTea,
+		},
+	}
+}
+
 type config struct {
-	locationOffset int
-	cache          pokecache.Cache
-	pokedex        map[string]Pokemon
+	nextLocation     string
+	previousLocation string
+	cache            pokecache.Cache
+	pokedex          map[string]Pokemon
 }
 
 func cleanInput(text string) []string {
@@ -80,9 +127,9 @@ func repl() {
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)
 	configuration := config{
-		locationOffset: 0,
-		cache:          pokecache.NewCache(5 * time.Second),
-		pokedex:        make(map[string]Pokemon),
+		nextLocation: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
+		cache:        pokecache.NewCache(5 * time.Second),
+		pokedex:      make(map[string]Pokemon),
 	}
 	for {
 		fmt.Print("Pokedex > ")

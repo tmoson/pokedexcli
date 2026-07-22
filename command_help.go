@@ -15,3 +15,12 @@ func commandHelp(conf *config, inputs ...string) error {
 	fmt.Println()
 	return nil
 }
+
+func commandHelpTea(conf *config, inputs ...string) string {
+	output := "\nWelcome to the Pokedex!\nUsage:\n\n"
+	for _, cmd := range getCommandsTea() {
+		output += fmt.Sprintf("%s: %s\n", cmd.name, cmd.description)
+	}
+	output += "\n"
+	return output
+}
