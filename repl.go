@@ -59,6 +59,11 @@ func getCommandsTea() map[string]teaCommand {
 			description: "Displays a help message",
 			callback:    commandHelpTea,
 		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExitTea,
+		},
 	}
 }
 
