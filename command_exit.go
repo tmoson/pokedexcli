@@ -10,3 +10,7 @@ func commandExit(conf *config, inputs ...string) error {
 	os.Exit(0)
 	return nil
 }
+
+func commandExitTea(conf *config, inputs ...string) string {
+	return ""
+}

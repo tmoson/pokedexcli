@@ -169,7 +169,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.response = ""
 				return m, nil
 			case "exit":
-				m.response = "Goodbye!"
 				return m, tea.Quit
 			default:
 				m.response = action.callback(m.configuration, command[1:]...)
@@ -177,8 +176,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.textInput.Focus()
 			}
 		case "up":
-			if m.inputInd > 0 {
-				m.inputInd--
+			if m.inputInd >= 0 {
+				if m.inputInd > 0 {
+					m.inputInd--
+				}
 				m.textInput.SetValue(m.previousInputs[m.inputInd])
 			}
 		case "down":
