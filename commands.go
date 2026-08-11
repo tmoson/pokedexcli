@@ -1,13 +1,9 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
 	"github.com/tmoson/pokedexcli/internal/pokecache"
-	"os"
 	"regexp"
 	"strings"
-	"time"
 )
 
 type cliCommand struct {
@@ -125,29 +121,5 @@ func getCommands() map[string]cliCommand {
 			description: "Exit the Pokedex",
 			callback:    commandExit,
 		},
-	}
-}
-
-func repl() {
-	commands := getCommands()
-	scanner := bufio.NewScanner(os.Stdin)
-	configuration := config{
-		nextLocation: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
-		cache:        pokecache.NewCache(5 * time.Second),
-		pokedex:      make(map[string]Pokemon),
-	}
-	for {
-		fmt.Print("Pokedex > ")
-		scanner.Scan()
-		instruction := cleanInput(scanner.Text())
-		action, ok := commands[instruction[0]]
-		if !ok {
-			fmt.Printf("Unrecognized command: %v\n", instruction[0])
-			continue
-		}
-		err := action.callback(&configuration, instruction[1:]...)
-		if err != nil {
-			fmt.Println(err)
-		}
 	}
 }
