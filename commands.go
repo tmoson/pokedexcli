@@ -6,12 +6,6 @@ import (
 	"strings"
 )
 
-type cliCommand struct {
-	name        string
-	description string
-	callback    func(*config, ...string) error
-}
-
 type teaCommand struct {
 	name        string
 	description string
@@ -48,7 +42,7 @@ func getCommandsTea() map[string]teaCommand {
 		"pokedex": {
 			name:        "pokedex",
 			description: "Display all the pokemon in your pokedex",
-			callback:    commandPokedexTea,
+			callback:    nil, // need to figure out how to properly null out unneeded callbacks
 		},
 		"help": {
 			name:        "help",
@@ -58,7 +52,7 @@ func getCommandsTea() map[string]teaCommand {
 		"exit": {
 			name:        "exit",
 			description: "Exit the Pokedex",
-			callback:    commandExitTea,
+			callback:    nil, // need to figure out how to properly null out unneeded callbacks
 		},
 	}
 }
@@ -77,49 +71,4 @@ func cleanInput(text string) []string {
 	}
 	re := regexp.MustCompile(`\s+`)
 	return re.Split(lowerText, -1)
-}
-
-func getCommands() map[string]cliCommand {
-	return map[string]cliCommand{
-		"map": {
-			name:        "map",
-			description: "Displays the next 20 map locations",
-			callback:    commandMap,
-		},
-		"mapb": {
-			name:        "mapb",
-			description: "Displays the previous 20 map locations",
-			callback:    commandMapb,
-		},
-		"explore": {
-			name:        "explore",
-			description: "Displays all of the encounterable pokemon in a location area",
-			callback:    commandExplore,
-		},
-		"catch": {
-			name:        "catch",
-			description: "Throws a pokeball at the provided pokemon",
-			callback:    commandCatch,
-		},
-		"inspect": {
-			name:        "catch",
-			description: "Inspect a pokemon you've caught",
-			callback:    commandInspect,
-		},
-		"pokedex": {
-			name:        "pokedex",
-			description: "Display all the pokemon in your pokedex",
-			callback:    commandPokedex,
-		},
-		"help": {
-			name:        "help",
-			description: "Displays a help message",
-			callback:    commandHelp,
-		},
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
-	}
 }

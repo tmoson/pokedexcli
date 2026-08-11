@@ -8,39 +8,6 @@ import (
 	"net/http"
 )
 
-func commandMap(conf *config, inputs ...string) error {
-	url := conf.nextLocation
-	var apiResponse LocationAPIResponse
-	val, found := conf.cache.Get(url)
-	if found {
-		err := json.Unmarshal(val, &apiResponse)
-		if err != nil {
-			return err
-		}
-	} else {
-		res, err := http.Get(url)
-		if err != nil {
-			return err
-		}
-		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		conf.cache.Add(url, body)
-		err = json.Unmarshal(body, &apiResponse)
-		if err != nil {
-			return err
-		}
-	}
-	for _, location := range apiResponse.Results {
-		fmt.Printf("%s\n", location.Name)
-	}
-	conf.nextLocation = apiResponse.Next
-	conf.previousLocation = apiResponse.Previous
-	return nil
-}
-
 func commandMapTea(conf *config, inputs ...string) string {
 	url := conf.nextLocation
 	var apiResponse LocationAPIResponse
