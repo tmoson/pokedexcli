@@ -69,7 +69,7 @@ func InitialModel() Model {
 		textInput:      ti,
 		styles:         styles,
 		pokedexStyles:  pokedexStyles,
-		inputInd:       -1,
+		inputInd:       0,
 		previousInputs: []string{},
 		pokedexList:    nil,
 	}
@@ -176,12 +176,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.textInput.Focus()
 			}
 		case "up":
-			if m.inputInd >= 0 {
-				if m.inputInd > 0 {
-					m.inputInd--
-				}
-				m.textInput.SetValue(m.previousInputs[m.inputInd])
+			if m.inputInd > 0 {
+				m.inputInd--
 			}
+			m.textInput.SetValue(m.previousInputs[m.inputInd])
 		case "down":
 			if m.inputInd < len(m.previousInputs)-1 {
 				m.inputInd++
