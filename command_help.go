@@ -6,7 +6,7 @@ import (
 )
 
 func commandHelpTea(conf *config, inputs ...string) string {
-	helpWidth := 70 // no point in calculating this when the help text is static at compile time
+	helpWidth := 90 // no point in calculating this when the help text is static at compile time
 	output := "\nWelcome to the Pokedex!\nUsage:\n\n"
 	for _, cmd := range getCommandsTea() {
 		nameLength := len(cmd.name)

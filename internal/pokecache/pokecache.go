@@ -6,31 +6,31 @@ import (
 )
 
 type cacheEntry struct {
-	createdAt time.Time
-	val       []byte
+	CreatedAt time.Time
+	Val       []byte
 }
 
 type Cache struct {
-	interval time.Duration
-	entries  map[string]cacheEntry
+	Interval time.Duration
+	Entries  map[string]cacheEntry
 	mu       sync.Mutex
 }
 
 func (c *Cache) Add(key string, val []byte) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.entries[key] = cacheEntry{
-		createdAt: time.Now(),
-		val:       val,
+	c.Entries[key] = cacheEntry{
+		CreatedAt: time.Now(),
+		Val:       val,
 	}
 }
 
 func (c *Cache) Get(key string) ([]byte, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	entry, exists := c.entries[key]
+	entry, exists := c.Entries[key]
 	if exists {
-		return entry.val, true
+		return entry.Val, true
 	}
 	return []byte{}, false
 }
@@ -38,20 +38,20 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 func (c *Cache) reapLoop() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	for key, entry := range c.entries {
-		if time.Since(entry.createdAt) > c.interval {
-			delete(c.entries, key)
+	for key, entry := range c.Entries {
+		if time.Since(entry.CreatedAt) > c.Interval {
+			delete(c.Entries, key)
 		}
 	}
 }
 
-func NewCache(interval time.Duration) Cache {
+func NewCache(Interval time.Duration) Cache {
 	cache := Cache{
-		interval: interval,
-		entries:  make(map[string]cacheEntry),
+		Interval: Interval,
+		Entries:  make(map[string]cacheEntry),
 	}
 	go func() {
-		cleaner := time.NewTicker(interval)
+		cleaner := time.NewTicker(Interval)
 		for range cleaner.C {
 			cache.reapLoop()
 		}

@@ -10,7 +10,7 @@ func commandInspectTea(conf *config, inputs ...string) string {
 		return "Need a pokemon to inspect!"
 	}
 	pokemon := inputs[0]
-	info, caught := conf.pokedex[pokemon]
+	info, caught := conf.Pokedex[pokemon]
 	if !caught {
 		return fmt.Sprintf("you have not caught %s!\n", pokemon)
 	}
@@ -25,8 +25,8 @@ func commandInspectTea(conf *config, inputs ...string) string {
 	header := headerStyle.Render(fmt.Sprintf("Name: %s", info.Name))
 
 	list := []string{
-		fmt.Sprintf("Height: %d M", info.Height/10),
-		fmt.Sprintf("Weight: %d kg", info.Weight/100),
+		fmt.Sprintf("Height: %.2f M", float64(info.Height)/10.0),
+		fmt.Sprintf("Weight: %.2f kg", float64(info.Weight)/100.0),
 		"Stats:",
 	}
 	for _, stat := range info.Stats {

@@ -4,6 +4,7 @@ import (
 	"github.com/tmoson/pokedexcli/internal/pokecache"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 type teaCommand struct {
@@ -54,14 +55,25 @@ func getCommandsTea() map[string]teaCommand {
 			description: "Exit the Pokedex",
 			callback:    nil, // need to figure out how to properly null out unneeded callbacks
 		},
+		"save": {
+			name:        "save",
+			description: "Save progress to provided file name or save0, located in ~/.pokecliSaves",
+			callback:    commandSaveTea,
+		},
+		"load": {
+			name:        "load",
+			description: "Load file provided or save0 by default, located in ~/.pokecliSaves",
+			callback:    commandLoadTea,
+		},
 	}
 }
 
 type config struct {
-	nextLocation     string
-	previousLocation string
-	cache            pokecache.Cache
-	pokedex          map[string]Pokemon
+	NextLocation     string
+	PreviousLocation string
+	Cache            pokecache.Cache
+	Pokedex          map[string]Pokemon
+	lock             sync.Mutex
 }
 
 func cleanInput(text string) []string {
