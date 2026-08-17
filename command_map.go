@@ -9,9 +9,9 @@ import (
 )
 
 func commandMapTea(conf *config, inputs ...string) string {
-	url := conf.nextLocation
+	url := conf.NextLocation
 	var apiResponse LocationAPIResponse
-	val, found := conf.cache.Get(url)
+	val, found := conf.Cache.Get(url)
 	if found {
 		err := json.Unmarshal(val, &apiResponse)
 		if err != nil {
@@ -27,7 +27,7 @@ func commandMapTea(conf *config, inputs ...string) string {
 		if err != nil {
 			return err.Error()
 		}
-		conf.cache.Add(url, body)
+		conf.Cache.Add(url, body)
 		err = json.Unmarshal(body, &apiResponse)
 		if err != nil {
 			return err.Error()
@@ -37,18 +37,18 @@ func commandMapTea(conf *config, inputs ...string) string {
 	for _, location := range apiResponse.Results {
 		output = fmt.Sprintf("%s%s\n", output, location.Name)
 	}
-	conf.nextLocation = apiResponse.Next
-	conf.previousLocation = apiResponse.Previous
+	conf.NextLocation = apiResponse.Next
+	conf.PreviousLocation = apiResponse.Previous
 	return output
 }
 
 func commandMapbTea(conf *config, inputs ...string) string {
-	if conf.previousLocation == "" {
+	if conf.PreviousLocation == "" {
 		return "Already at the beginning!"
 	}
-	url := conf.previousLocation
+	url := conf.PreviousLocation
 	var apiResponse LocationAPIResponse
-	val, found := conf.cache.Get(url)
+	val, found := conf.Cache.Get(url)
 	if found {
 		err := json.Unmarshal(val, &apiResponse)
 		if err != nil {
@@ -73,18 +73,18 @@ func commandMapbTea(conf *config, inputs ...string) string {
 	for _, location := range apiResponse.Results {
 		output = fmt.Sprintf("%s%s\n", output, location.Name)
 	}
-	conf.nextLocation = apiResponse.Next
-	conf.previousLocation = apiResponse.Previous
+	conf.NextLocation = apiResponse.Next
+	conf.PreviousLocation = apiResponse.Previous
 	return output
 }
 
 func commandMapb(conf *config, inputs ...string) error {
-	if conf.previousLocation == "" {
+	if conf.PreviousLocation == "" {
 		return errors.New("Already at the beginning!")
 	}
-	url := conf.previousLocation
+	url := conf.PreviousLocation
 	var apiResponse LocationAPIResponse
-	val, found := conf.cache.Get(url)
+	val, found := conf.Cache.Get(url)
 	if found {
 		err := json.Unmarshal(val, &apiResponse)
 		if err != nil {
@@ -108,7 +108,7 @@ func commandMapb(conf *config, inputs ...string) error {
 	for _, location := range apiResponse.Results {
 		fmt.Printf("%s\n", location.Name)
 	}
-	conf.nextLocation = apiResponse.Next
-	conf.previousLocation = apiResponse.Previous
+	conf.NextLocation = apiResponse.Next
+	conf.PreviousLocation = apiResponse.Previous
 	return nil
 }

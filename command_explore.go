@@ -13,7 +13,7 @@ func commandExploreTea(conf *config, inputs ...string) string {
 	}
 	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/%s", inputs[0])
 	var areaInfo LocationArea
-	val, found := conf.cache.Get(url)
+	val, found := conf.Cache.Get(url)
 	if found {
 		err := json.Unmarshal(val, &areaInfo)
 		if err != nil {
@@ -29,7 +29,7 @@ func commandExploreTea(conf *config, inputs ...string) string {
 		if err != nil {
 			return err.Error()
 		}
-		conf.cache.Add(url, body)
+		conf.Cache.Add(url, body)
 		err = json.Unmarshal(body, &areaInfo)
 		if err != nil {
 			return err.Error()

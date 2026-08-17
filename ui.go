@@ -58,9 +58,9 @@ func InitialModel() Model {
 	ti.Focus()
 	commands := getCommandsTea()
 	configuration := config{
-		nextLocation: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
-		cache:        pokecache.NewCache(10 * time.Minute),
-		pokedex:      make(map[string]Pokemon),
+		NextLocation: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
+		Cache:        pokecache.NewCache(10 * time.Minute),
+		Pokedex:      make(map[string]Pokemon),
 	}
 	styles := DefaultStyles()
 	return Model{
@@ -106,7 +106,7 @@ func (m Model) UpdateList(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) GetPokedexEntries() []list.Item {
 	var entries []list.Item
-	for pokemon, pokemonInfo := range m.configuration.pokedex {
+	for pokemon, pokemonInfo := range m.configuration.Pokedex {
 		newEntry := PokedexEntry{
 			name:   pokemon,
 			number: pokemonInfo.Id,
@@ -176,10 +176,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.textInput.Focus()
 			}
 		case "up":
+			m.textInput.SetValue(m.previousInputs[m.inputInd])
 			if m.inputInd > 0 {
 				m.inputInd--
 			}
-			m.textInput.SetValue(m.previousInputs[m.inputInd])
 		case "down":
 			if m.inputInd < len(m.previousInputs)-1 {
 				m.inputInd++

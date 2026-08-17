@@ -28,7 +28,7 @@ func commandCatchTea(conf *config, inputs ...string) string {
 	output := fmt.Sprintf("Throwing %s at %s...\n", pokeball, pokemon)
 	url := fmt.Sprintf("https://pokeapi.co/api/v2/pokemon/%s", pokemon)
 	var pokemonInfo Pokemon
-	val, cached := conf.cache.Get(url)
+	val, cached := conf.Cache.Get(url)
 	if cached {
 		err := json.Unmarshal(val, &pokemonInfo)
 		if err != nil {
@@ -44,7 +44,7 @@ func commandCatchTea(conf *config, inputs ...string) string {
 		if err != nil {
 			return err.Error()
 		}
-		conf.cache.Add(url, body)
+		conf.Cache.Add(url, body)
 		err = json.Unmarshal(body, &pokemonInfo)
 		if err != nil {
 			return err.Error()
@@ -60,7 +60,7 @@ func commandCatchTea(conf *config, inputs ...string) string {
 		catchRate *= 2
 	}
 	if rand.Intn(400) < catchRate {
-		conf.pokedex[pokemon] = pokemonInfo
+		conf.Pokedex[pokemon] = pokemonInfo
 		output += fmt.Sprintf("%s was caught!\n", pokemon)
 	} else {
 		output += fmt.Sprintf("%s escaped!\n", pokemon)
