@@ -36,7 +36,7 @@ func getCommandsTea() map[string]teaCommand {
 			callback:    commandCatchTea,
 		},
 		"inspect": {
-			name:        "catch",
+			name:        "inspect",
 			description: "Inspect a pokemon you've caught",
 			callback:    commandInspectTea,
 		},
